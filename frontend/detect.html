@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTON | Image Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0F172A;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #result-container {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #result-image {
+            max-width: 100%;
+            border: 2px solid #00F5FF;
+            border-radius: 10px;
+            margin-top: 1rem;
+        }
+
+        #detections {
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 600px;
+            background: rgba(15,23,42,0.8);
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid #00F5FF;
+        }
+
+        .detection-item {
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>ANTON | Image Detection</h1>
+
+    <input type="file" id="file-input" accept="image/*">
+    <button id="detect-btn" class="mt-4 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300">
+        Detect
+    </button>
+
+    <div id="result-container">
+        <img id="result-image" src="" alt="Detection Result">
+        <div id="detections"></div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const detectBtn = document.getElementById('detect-btn');
+        const resultImage = document.getElementById('result-image');
+        const detectionsDiv = document.getElementById('detections');
+
+        detectBtn.addEventListener('click', async () => {
+            if (!fileInput.files[0]) {
+                alert("Please select an image first");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('image', fileInput.files[0]);
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                resultImage.src = `data:image/jpeg;base64,${data.image_base64}`;
+                detectionsDiv.innerHTML = '';
+                if (data.detections.length === 0) {
+                    detectionsDiv.innerHTML = '<p>No objects detected</p>';
+                } else {
+                    data.detections.forEach(det => {
+                        const div = document.createElement('div');
+                        div.className = 'detection-item';
+                        div.textContent = `${det.label} | Confidence: ${det.confidence} | BBox: [${det.bbox.join(', ')}]`;
+                        detectionsDiv.appendChild(div);
+                    });
+                }
+
+            } catch (err) {
+                console.error(err);
+                alert("Error connecting to backend");
+            }
+        });
+    </script>
+</body>
+</html>
