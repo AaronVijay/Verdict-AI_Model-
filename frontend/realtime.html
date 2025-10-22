@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANTON | Real-Time Detection</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    body { font-family: 'Inter', sans-serif; background: #0F172A; color: white; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px;}
+    video, img { border: 2px solid #00F5FF; border-radius: 10px; max-width: 100%; }
+    pre { background: rgba(0,0,0,0.6); padding: 10px; border-radius: 10px; overflow-x: auto; margin-top: 20px; width: 100%; max-width: 600px; }
+</style>
+</head>
+<body>
+
+<h1 class="text-3xl font-bold mb-6 text-cyan-400">Real-Time YOLOv8 Detection</h1>
+
+<video id="webcam" autoplay playsinline width="640" height="480" class="mb-4"></video>
+<img id="resultImage" class="mb-4" />
+<pre id="jsonOutput"></pre>
+
+<script>
+const video = document.getElementById('webcam');
+const resultImage = document.getElementById('resultImage');
+const jsonOutput = document.getElementById('jsonOutput');
+
+navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
+    video.srcObject = stream;
+}).catch(err => {
+    alert("Error accessing webcam: " + err);
+});
+
+async function detectFrame() {
+    if(video.videoWidth === 0 || video.videoHeight === 0) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append('image', blob, 'frame.jpg');
+
+        try {
+            const response = await fetch('/detect', { method: 'POST', body: formData });
+            const data = await response.json();
+
+            if(data.error) {
+                console.log(data.error);
+            } else {
+                resultImage.src = 'data:image/jpeg;base64,' + data.image_base64;
+                jsonOutput.textContent = JSON.stringify(data.detections, null, 2);
+            }
+        } catch(err) {
+            console.error("Error connecting to backend:", err);
+        }
+    }, 'image/jpeg');
+}
+
+setInterval(detectFrame, 500);
+</script>
+
+</body>
+</html>
