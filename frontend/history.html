@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection History | ANTON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #00F5FF;
+            --color-secondary: #7B68EE;
+            --color-accent: #FF6B6B;
+            --color-success: #4ECDC4;
+            --color-bg: #0F172A;
+            --color-card: rgba(15, 23, 42, 0.8);
+            --color-border: rgba(0, 245, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg);
+            background-image: url('https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: -1;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-link {
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .history-card {
+            background: var(--color-card);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--color-border);
+            border-radius: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .history-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--color-primary);
+            color: var(--color-bg);
+        }
+
+        .filter-btn:hover {
+            border-color: var(--color-primary);
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(78, 205, 196, 0.2);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+
+        .status-warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid #ffc107;
+        }
+
+        .status-danger {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--color-accent);
+            border: 1px solid var(--color-accent);
+        }
+
+        .pagination-btn {
+            background: var(--color-card);
+            border: 1px solid var(--color-border);
+            color: var(--color-primary);
+            transition: all 0.3s ease;
+        }
+
+        .pagination-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-bg);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .search-input {
+            background: var(--color-card);
+            border: 1px solid var(--color-border);
+            color: white;
+        }
+
+        .search-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="logo">ANTON</div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="detect.html" class="nav-link">Detect</a>
+                    <a href="realtime.html" class="nav-link">Real Time Detect</a>
+                    <a href="history.html" class="nav-link text-cyan-400">History</a>
+                </nav>
+                <!-- Mobile menu button -->
+                <button class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                Detection <span class="text-cyan-400">History</span>
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                View and analyze historical detection data. Track safety equipment monitoring, system performance, and detection accuracy over time.
+            </p>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Search -->
+                <div class="history-card p-4">
+                    <label class="block text-sm font-medium mb-2">Search</label>
+                    <input type="text" id="searchInput" class="search-input w-full px-3 py-2 rounded-lg" placeholder="Search detections...">
+                </div>
+
+                <!-- Date Range -->
+                <div class="history-card p-4">
+                    <label class="block text-sm font-medium mb-2">Date Range</label>
+                    <select id="dateRange" class="search-input w-full px-3 py-2 rounded-lg">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+
+                <!-- Object Type -->
+                <div class="history-card p-4">
+                    <label class="block text-sm font-medium mb-2">Object Type</label>
+                    <select id="objectType" class="search-input w-full px-3 py-2 rounded-lg">
+                        <option value="all">All Objects</option>
+                        <option value="fire-extinguisher">Fire Extinguisher</option>
+                        <option value="first-aid">First Aid Kit</option>
+                        <option value="oxygen-tank">Oxygen Tank</option>
+                        <option value="safety-helmet">Safety Helmet</option>
+                        <option value="emergency-phone">Emergency Phone</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-4 mt-6">
+                <button class="filter-btn active px-4 py-2 rounded-lg" data-filter="all">All</button>
+                <button class="filter-btn px-4 py-2 rounded-lg" data-filter="success">Successful</button>
+                <button class="filter-btn px-4 py-2 rounded-lg" data-filter="warning">Warning</button>
+                <button class="filter-btn px-4 py-2 rounded-lg" data-filter="error">Error</button>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="history-card p-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-cyan-400 mb-2" id="totalDetections">1,247</div>
+                    <div class="text-sm text-gray-400">Total Detections</div>
+                </div>
+            </div>
+            
+            <div class="history-card p-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-green-400 mb-2" id="successRate">98.3%</div>
+                    <div class="text-sm text-gray-400">Success Rate</div>
+                </div>
+            </div>
+            
+            <div class="history-card p-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-purple-400 mb-2" id="avgAccuracy">94.7%</div>
+                    <div class="text-sm text-gray-400">Avg Accuracy</div>
+                </div>
+            </div>
+            
+            <div class="history-card p-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2" id="avgResponse">12ms</div>
+                    <div class="text-sm text-gray-400">Avg Response Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detection History Table -->
+        <div class="history-card p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-semibold">Detection Records</h2>
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm text-gray-400">Showing <span id="showingCount">10</span> of <span id="totalCount">1,247</span> records</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-700">
+                            <th class="text-left py-3 px-4 font-semibold">Timestamp</th>
+                            <th class="text-left py-3 px-4 font-semibold">Object Type</th>
+                            <th class="text-left py-3 px-4 font-semibold">Confidence</th>
+                            <th class="text-left py-3 px-4 font-semibold">Status</th>
+                            <th class="text-left py-3 px-4 font-semibold">Location</th>
+                            <th class="text-left py-3 px-4 font-semibold">Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- Sample data -->
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4">2024-01-15 14:32:18</td>
+                            <td class="py-3 px-4">Fire Extinguisher</td>
+                            <td class="py-3 px-4">0.983</td>
+                            <td class="py-3 px-4"><span class="status-badge status-success">Success</span></td>
+                            <td class="py-3 px-4">Section A-1</td>
+                            <td class="py-3 px-4">11ms</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4">2024-01-15 14:28:45</td>
+                            <td class="py-3 px-4">First Aid Kit</td>
+                            <td class="py-3 px-4">0.956</td>
+                            <td class="py-3 px-4"><span class="status-badge status-success">Success</span></td>
+                            <td class="py-3 px-4">Section B-2</td>
+                            <td class="py-3 px-4">9ms</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4">2024-01-15 14:25:12</td>
+                            <td class="py-3 px-4">Oxygen Tank</td>
+                            <td class="py-3 px-4">0.892</td>
+                            <td class="py-3 px-4"><span class="status-badge status-warning">Warning</span></td>
+                            <td class="py-3 px-4">Section C-3</td>
+                            <td class="py-3 px-4">15ms</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4">2024-01-15 14:22:33</td>
+                            <td class="py-3 px-4">Safety Helmet</td>
+                            <td class="py-3 px-4">0.967</td>
+                            <td class="py-3 px-4"><span class="status-badge status-success">Success</span></td>
+                            <td class="py-3 px-4">Section A-2</td>
+                            <td class="py-3 px-4">8ms</td>
+                        </tr>
+                        <tr class="border-b border-gray-800 hover:bg-gray-800/50">
+                            <td class="py-3 px-4">2024-01-15 14:19:07</td>
+                            <td class="py-3 px-4">Emergency Phone</td>
+                            <td class="py-3 px-4">0.734</td>
+                            <td class="py-3 px-4"><span class="status-badge status-danger">Error</span></td>
+                            <td class="py-3 px-4">Section D-1</td>
+                            <td class="py-3 px-4">23ms</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-between items-center mt-6">
+                <div class="flex items-center space-x-2">
+                    <button class="pagination-btn px-3 py-2 rounded-lg" disabled>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <button class="pagination-btn px-3 py-2 rounded-lg bg-cyan-500 text-black">1</button>
+                    <button class="pagination-btn px-3 py-2 rounded-lg">2</button>
+                    <button class="pagination-btn px-3 py-2 rounded-lg">3</button>
+                    <span class="px-2 text-gray-400">...</span>
+                    <button class="pagination-btn px-3 py-2 rounded-lg">125</button>
+                    <button class="pagination-btn px-3 py-2 rounded-lg">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="text-sm text-gray-400">
+                    Page 1 of 125
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Options -->
+        <div class="mt-8 text-center">
+            <div class="history-card p-6 inline-block">
+                <h3 class="text-lg font-semibold mb-4">Export Data</h3>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button class="filter-btn px-6 py-3 rounded-lg">
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export CSV
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-lg">
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Export PDF
+                    </button>
+                    <button class="filter-btn px-6 py-3 rounded-lg">
+                        <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                        Generate Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Filter functionality
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const searchInput = document.getElementById('searchInput');
+        const dateRange = document.getElementById('dateRange');
+        const objectType = document.getElementById('objectType');
+
+        // Filter button click handlers
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                applyFilters();
+            });
+        });
+
+        // Search and filter change handlers
+        [searchInput, dateRange, objectType].forEach(input => {
+            input.addEventListener('change', applyFilters);
+        });
+
+        function applyFilters() {
+            // This would normally filter the data
+            console.log('Applying filters...');
+        }
+
+        // Export functionality
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            if (btn.textContent.includes('Export') || btn.textContent.includes('Generate')) {
+                btn.addEventListener('click', () => {
+                    alert('Export functionality would be implemented here');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
