@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANTON | Advanced Neural Technology Operations Network</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #00F5FF;
+            --color-secondary: #7B68EE;
+            --color-accent: #FF6B6B;
+            --color-success: #4ECDC4;
+            --color-bg: #0F172A;
+            --color-card: rgba(15, 23, 42, 0.8);
+            --color-border: rgba(0, 245, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--color-bg);
+            background-image: url('https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: -1;
+        }
+
+        .header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .nav-link {
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--color-primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .feature-card {
+            background: var(--color-card);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .robot-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .robot {
+            width: 400px;
+            height: 500px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .robot-head {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 50%;
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .robot-eyes {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 20px;
+            background: var(--color-primary);
+            border-radius: 10px;
+            box-shadow: 0 0 20px var(--color-primary);
+            animation: blink 4s infinite;
+        }
+
+        .robot-mouth {
+            position: absolute;
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 8px;
+            background: var(--color-primary);
+            border-radius: 4px;
+            box-shadow: 0 0 15px var(--color-primary);
+        }
+
+        .robot-antenna {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 30px;
+            background: var(--color-primary);
+            border-radius: 2px;
+        }
+
+        .robot-antenna::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -3px;
+            width: 10px;
+            height: 10px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .robot-body {
+            position: absolute;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 20px;
+            box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .robot-chest {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--color-primary);
+            animation: pulse 2s infinite;
+        }
+
+        .robot-arm {
+            position: absolute;
+            top: 80px;
+            right: -60px;
+            width: 40px;
+            height: 120px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 20px;
+            transform-origin: top center;
+            animation: wave 3s infinite;
+        }
+
+        .robot-hand {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+            border-radius: 15px;
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { height: 20px; }
+            95% { height: 5px; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px var(--color-primary); }
+            50% { box-shadow: 0 0 50px var(--color-primary); }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: var(--color-primary);
+            text-shadow: 0 0 10px var(--color-primary);
+        }
+
+        @media (max-width: 768px) {
+            .robot {
+                width: 300px;
+                height: 400px;
+            }
+            
+            .robot-head {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .robot-body {
+                width: 150px;
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="logo">ANTON</div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="detect.html" class="nav-link">Detect</a>
+                    <a href="realtime.html" class="nav-link">Real Time Detect</a>
+                    <a href="history.html" class="nav-link">History</a>
+                </nav>
+                <button class="md:hidden text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="space-y-8">
+                <div>
+                    <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                        Advanced Neural Technology
+                        <span class="text-cyan-400">Operations Network</span>
+                    </h1>
+                    <p class="text-xl text-gray-300 leading-relaxed">
+                        Real-time detection of safety equipment, tools, and critical systems using advanced YOLOv8 technology for space station monitoring and safety protocols.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="feature-card p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-2 text-white">REAL-TIME DETECTION</h3>
+                        <p class="text-sm text-gray-300">Advanced YOLOv8 model achieving 0.983 mAP@50 for accurate safety equipment detection in real-time environments.</p>
+                    </div>
+                    
+                    <div class="feature-card p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-2 text-white">SINGLE MODEL APPROACH</h3>
+                        <p class="text-sm text-gray-300">One highly-optimized model for all safety classes - no ensemble complexity, maximum efficiency.</p>
+                    </div>
+                    
+                    <div class="feature-card p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-2 text-white">EDGE DEVICE READY</h3>
+                        <p class="text-sm text-gray-300">Optimized for real-time inference on space station monitoring systems and embedded devices.</p>
+                    </div>
+                    
+                    <div class="feature-card p-6 rounded-lg">
+                        <h3 class="text-lg font-semibold mb-2 text-white">SAFETY CRITICAL</h3>
+                        <p class="text-sm text-gray-300">Designed for reliability in safety-critical space station environments with fail-safe protocols.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="realtime.html" class="bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-3 px-8 rounded-lg transition-all duration-300 text-center">
+                        Start Real-Time Detection
+                    </a>
+                    <a href="detect.html" class="border border-cyan-500 text-cyan-500 hover:bg-cyan-500 hover:text-black font-semibold py-3 px-8 rounded-lg transition-all duration-300 text-center">
+                        Image Analysis
+                    </a>
+                </div>
+            </div>
+
+            <div class="robot-container">
+                <div class="robot">
+                    <div class="robot-head">
+                        <div class="robot-antenna"></div>
+                        <div class="robot-eyes"></div>
+                        <div class="robot-mouth"></div>
+                    </div>
+                    <div class="robot-body">
+                        <div class="robot-chest"></div>
+                        <div class="robot-arm">
+                            <div class="robot-hand"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-20 border-t border-gray-700 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-400">
+            <p>&copy; 2024 ANTON - Advanced Neural Technology Operations Network. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
